@@ -124,19 +124,31 @@ class AIAnomalyDetector:
         return is_anomalous, round(final_score, 3), reasons, severity
 
     def _record_security_alert(self, app_id: str, severity: str, description: str, confidence: float):
-        """Persists high-confidence security incidents to DB."""
-        try:
-            conn = get_db_connection()
-            now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
-            alert_id = f"ALT-AI-{uuid.uuid4().hex[:8].upper()}"
-            conn.execute("""
-            INSERT INTO security_alerts (alert_id, timestamp, app_id, alert_type, severity, description, status, ai_confidence)
-            VALUES (?, ?, ?, 'ANOMALOUS_TRAFFIC_PATTERN', ?, ?, 'ACTIVE', ?)
-            """, (alert_id, now_iso, app_id or "ANONYMOUS", severity, description, round(confidence, 2)))
-            conn.commit()
-            conn.close()
-        except Exception as e:
-            print(f"Error saving security alert: {e}")
+        """Persists high-confidence security incidents to DB with retry."""
+        import time as pytime
+        for attempt in range(4):
+            conn = None
+            try:
+                conn = get_db_connection()
+                now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                alert_id = f"ALT-AI-{uuid.uuid4().hex[:8].upper()}"
+                conn.execute("""
+                INSERT INTO security_alerts (alert_id, timestamp, app_id, alert_type, severity, description, status, ai_confidence)
+                VALUES (?, ?, ?, 'ANOMALOUS_TRAFFIC_PATTERN', ?, ?, 'ACTIVE', ?)
+                """, (alert_id, now_iso, app_id or "ANONYMOUS", severity, description, round(confidence, 2)))
+                conn.commit()
+                break
+            except Exception as e:
+                if attempt == 3:
+                    # Final attempt failed
+                    pass
+                pytime.sleep(0.08)
+            finally:
+                if conn:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
 
 # Global singleton instance
 detector = AIAnomalyDetector()

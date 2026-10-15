@@ -139,18 +139,27 @@ class OpenBankGatewayHandler(BaseHTTPRequestHandler):
             is_scope_violation=is_violation
         )
 
-        try:
-            conn = get_db_connection()
-            import datetime
-            now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
-            conn.execute("""
-            INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (now_iso, app_id, self.command, self.path.split("?")[0], status_code, client_ip, round(latency_ms, 2), content_len, int(is_anom), anom_score))
-            conn.commit()
-            conn.close()
-        except Exception as e:
-            print(f"Error logging telemetry: {e}")
+        import time as pytime
+        for attempt in range(4):
+            conn = None
+            try:
+                conn = get_db_connection()
+                import datetime
+                now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                conn.execute("""
+                INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (now_iso, app_id, self.command, self.path.split("?")[0], status_code, client_ip, round(latency_ms, 2), content_len, int(is_anom), anom_score))
+                conn.commit()
+                break
+            except Exception as e:
+                pytime.sleep(0.05)
+            finally:
+                if conn:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
 
     # =========================================================================
     # Request Routing
