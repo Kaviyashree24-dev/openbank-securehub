@@ -1,0 +1,75 @@
+### ==========================================================================
+### SecureBank Connect - VS Code REST Client Test Scenarios
+### (Use with VS Code REST Client extension)
+### ==========================================================================
+
+@baseUrl = http://127.0.0.1:8000
+@appId = app_finpulse_9281
+@apiKey = sb_live_finpulse_k9281a
+
+### 1. Gateway Health & Metrics
+GET {{baseUrl}}/api/v1/monitoring/metrics
+Accept: application/json
+
+### 2. Request OAuth2 Scoped Bearer Token
+# @name oauthToken
+POST {{baseUrl}}/api/v1/oauth/token
+Content-Type: application/json
+
+{
+  "client_id": "app_finpulse_9281",
+  "client_secret": "sec_live_9a8f7c6e5d4b",
+  "customer_id": "CUST-1001",
+  "scopes": ["accounts:read", "balances:read", "transactions:read"]
+}
+
+### 3. List Customer Accounts (Using Bearer Token)
+@authToken = {{oauthToken.response.body.access_token}}
+
+GET {{baseUrl}}/api/v1/accounts
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 4. Get Account Balances
+GET {{baseUrl}}/api/v1/accounts/ACC-US-8901/balances
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 5. Get Account Transactions (Filtered)
+GET {{baseUrl}}/api/v1/accounts/ACC-US-8901/transactions?limit=10
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+### 6. Initiate Payment (Simulated Transfer)
+# Note: FinPulse app does not have payments:create scope -> Expect 403 Forbidden!
+POST {{baseUrl}}/api/v1/payments
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "from_account_id": "ACC-US-8901",
+  "to_account_id": "ACC-US-8903",
+  "amount": 150.00,
+  "currency": "USD",
+  "reference": "Monthly SaaS subscription"
+}
+
+### 7. Trigger Live Attack / Traffic Simulation (Normal Traffic)
+POST {{baseUrl}}/api/v1/simulate/traffic
+Content-Type: application/json
+
+{
+  "scenario": "normal"
+}
+
+### 8. Trigger Live Traffic Burst / DDoS Attack (Triggers AI Anomaly Flag)
+POST {{baseUrl}}/api/v1/simulate/traffic
+Content-Type: application/json
+
+{
+  "scenario": "burst"
+}
+
+### 9. View AI Security Alerts
+GET {{baseUrl}}/api/v1/monitoring/alerts
+Accept: application/json

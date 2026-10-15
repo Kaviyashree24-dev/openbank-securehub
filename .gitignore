@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Database
+openbank.db
+db.sqlite3
+*.sqlite3
+
+# Environment
+.env
+.env.local
+
+# IDE (Keep launch.json and tasks.json, ignore user state)
+.idea/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+!.vscode/extensions.json

@@ -1,0 +1,4 @@
+# SecureBank Connect - Dependencies
+scikit-learn>=1.4.0
+numpy>=1.26.0
+scipy>=1.10.0

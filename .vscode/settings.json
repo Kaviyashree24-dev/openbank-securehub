@@ -1,0 +1,12 @@
+{
+    "python.defaultInterpreterPath": "python",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "files.exclude": {
+        "**/.git": false,
+        "**/__pycache__": true,
+        "**/*.pyc": true
+    },
+    "editor.formatOnSave": true,
+    "editor.rulers": [100]
+}
