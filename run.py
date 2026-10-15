@@ -13,18 +13,12 @@ from server.anomaly_detector import detector
 def print_banner():
     banner = f"""
 ======================================================================
-  ____                             ____              _    
- / ___|  ___  ___ _   _ _ __ ___  | __ )  __ _ _ __ | | __
- \___ \ / _ \/ __| | | | '__/ _ \ |  _ \ / _` | '_ \| |/ /
-  ___) |  __/ (__| |_| | | |  __/ | |_) | (_| | | | |   < 
- |____/ \___|\___|\__,_|_|  \___| |____/ \__,_|_| |_|_|\_\\
-                                                           
-  CONNECT · One Secure Gateway. Smarter Banking Integrations.
+  SecureBank Connect · Open Banking Gateway & AI Anomaly Detection
 ======================================================================
-  [✓] Database:       SQLite initialized with synthetic data
-  [✓] AI Engine:      Scikit-Learn IsolationForest model trained
-  [✓] Consent Engine: Active & Scoped Access Governance enabled
-  [✓] Gateway Server: Running at http://{HOST}:{PORT}
+  [+] Database:       SQLite initialized with synthetic data
+  [+] AI Engine:      Scikit-Learn IsolationForest model trained
+  [+] Consent Engine: Active & Scoped Access Governance enabled
+  [+] Gateway Server: Running at http://{HOST}:{PORT}
   
   Developer Portal & Dashboard: http://{HOST}:{PORT}
   Press Ctrl+C to terminate the server.

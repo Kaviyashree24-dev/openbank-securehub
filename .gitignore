@@ -10,9 +10,9 @@ venv/
 ENV/
 
 # Database
-openbank.db
-db.sqlite3
-*.sqlite3
+openbank.db*
+db.sqlite3*
+*.sqlite3*
 
 # Environment
 .env
