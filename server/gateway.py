@@ -147,9 +147,9 @@ class OpenBankGatewayHandler(BaseHTTPRequestHandler):
                 import datetime
                 now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 conn.execute("""
-                INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (now_iso, app_id, self.command, self.path.split("?")[0], status_code, client_ip, round(latency_ms, 2), content_len, int(is_anom), anom_score))
+                INSERT INTO api_logs (created_at, timestamp, app_id, method, endpoint, response_status, status_code, ip_address, response_time, response_time_ms, payload_size, is_anomalous, anomaly_score)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (now_iso, now_iso, app_id, self.command, self.path.split("?")[0], status_code, status_code, client_ip, round(latency_ms, 2), round(latency_ms, 2), content_len, int(is_anom), anom_score))
                 conn.commit()
                 break
             except Exception as e:
@@ -195,6 +195,20 @@ class OpenBankGatewayHandler(BaseHTTPRequestHandler):
             if path == "/api/v1/monitoring/alerts":
                 data = self.handle_get_alerts()
                 self.send_json_response(200, data)
+                return
+
+            if path == "/api/v1/developers":
+                conn = get_db_connection()
+                devs = [dict(r) for r in conn.execute("SELECT * FROM developers").fetchall()]
+                conn.close()
+                self.send_json_response(200, {"developers": devs})
+                return
+
+            if path == "/api/v1/users":
+                conn = get_db_connection()
+                users = [dict(r) for r in conn.execute("SELECT * FROM users").fetchall()]
+                conn.close()
+                self.send_json_response(200, {"users": users})
                 return
 
             if path == "/api/v1/apps":
@@ -453,10 +467,34 @@ class OpenBankGatewayHandler(BaseHTTPRequestHandler):
                 parts = path.strip("/").split("/")
                 alert_id = parts[4]
                 conn = get_db_connection()
-                conn.execute("UPDATE security_alerts SET status = 'RESOLVED' WHERE alert_id = ?", (alert_id,))
+                conn.execute("UPDATE alerts SET status = 'RESOLVED' WHERE alert_id = ?", (alert_id,))
                 conn.commit()
                 conn.close()
                 self.send_json_response(200, {"alert_id": alert_id, "status": "RESOLVED"})
+                return
+
+            # 6b. Suspend App Key from Alert (Implements Admin Alert -> Suspend test key -> Auth & Consent Checks feedback loop)
+            if path.startswith("/api/v1/monitoring/alerts/") and path.endswith("/suspend-app"):
+                parts = path.strip("/").split("/")
+                alert_id = parts[4]
+                conn = get_db_connection()
+                alert_row = conn.execute("SELECT * FROM alerts WHERE alert_id = ?", (alert_id,)).fetchone()
+                if not alert_row:
+                    conn.close()
+                    status_code = 404
+                    self.send_json_response(404, {"error": "alert_not_found"})
+                    return
+                target_app_id = alert_row["app_id"]
+                conn.execute("UPDATE applications SET is_active = 0, status = 'SUSPENDED' WHERE client_id = ?", (target_app_id,))
+                conn.execute("UPDATE alerts SET status = 'RESOLVED' WHERE alert_id = ?", (alert_id,))
+                conn.commit()
+                conn.close()
+                self.send_json_response(200, {
+                    "alert_id": alert_id,
+                    "target_app_id": target_app_id,
+                    "status": "SUSPENDED",
+                    "message": f"Partner app '{target_app_id}' suspended. Future requests will be blocked at Auth & Consent Checks."
+                })
                 return
 
             # 7. Traffic Simulator Trigger: POST /api/v1/simulate/traffic
@@ -579,7 +617,12 @@ class OpenBankGatewayHandler(BaseHTTPRequestHandler):
 
     def handle_list_apps(self):
         conn = get_db_connection()
-        rows = conn.execute("SELECT * FROM partner_apps ORDER BY id ASC").fetchall()
+        rows = conn.execute("""
+        SELECT a.*, COALESCE(a.app_name, a.name) AS name, d.name AS developer_name, d.company_name
+        FROM applications a
+        LEFT JOIN developers d ON a.developer_id = d.developer_id
+        ORDER BY a.rowid ASC
+        """).fetchall()
         conn.close()
         return {"apps": [dict(r) for r in rows]}
 

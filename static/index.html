@@ -45,6 +45,10 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7.5" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
                 Customer Consent
             </button>
+            <button class="nav-tab" data-tab="architecture">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                Architecture & ERD
+            </button>
             <button class="nav-tab" data-tab="monitoring">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                 AI Monitoring & Threats
@@ -164,6 +168,104 @@
                     </p>
                 </div>
                 <button class="btn btn-emerald" onclick="switchTab('monitoring')">Explore Monitor</button>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB: ARCHITECTURE & ER DIAGRAM -->
+        <!-- ============================================================== -->
+        <section id="tab-architecture" class="tab-content">
+            <div class="card mb-4">
+                <div class="card-header flex-between">
+                    <div>
+                        <span class="hero-tag">OFFICIAL PROTOTYPE ARCHITECTURE</span>
+                        <h3>SecureBank Connect — System Architecture</h3>
+                        <p>End-to-end request path and continuous AI monitoring loop</p>
+                    </div>
+                    <span class="badge badge-emerald">Synthetic Data & Mock APIs Only</span>
+                </div>
+
+                <div class="diagram-container">
+                    <img src="/img/system_architecture.jpg" alt="SecureBank Connect System Architecture" class="diagram-image">
+                </div>
+
+                <div class="arch-legend-grid mt-4">
+                    <div class="legend-card">
+                        <div class="legend-header">
+                            <span class="badge badge-blue">REQUEST PATH</span>
+                            <h4>App ➔ Gateway ➔ Mock Banking Core</h4>
+                        </div>
+                        <p class="text-sm text-muted">
+                            1. <strong>Developer / Partner App</strong> registers on Developer Portal and requests API access.<br>
+                            2. <strong>Developer Portal</strong> delivers documentation, sandbox credentials, and dashboard.<br>
+                            3. <strong>API Gateway</strong> handles incoming requests, routes endpoints (<code>/v1</code>), and enforces rate limits.<br>
+                            4. <strong>Auth & Consent Checks</strong> verifies bearer token/API key, validates active customer consent, and rejects unauthorized calls (401/403).<br>
+                            5. <strong>Mock Banking Services</strong> queries synthetic banking ledger (accounts, balances, transactions, and payments).<br>
+                            6. <strong>Database</strong> records transactions and updates customer account balances.
+                        </p>
+                    </div>
+
+                    <div class="legend-card">
+                        <div class="legend-header">
+                            <span class="badge badge-crimson">MONITORING & AI PATH</span>
+                            <h4>Telemetry ➔ IsolationForest ➔ Admin Feedback Loop</h4>
+                        </div>
+                        <p class="text-sm text-muted">
+                            1. <strong>API Activity Logs:</strong> Every request is recorded with client ID, endpoint, HTTP status, and latency.<br>
+                            2. <strong>Monitoring Module:</strong> Aggregates traffic patterns, error ratios, and latency deviations.<br>
+                            3. <strong>AI Anomaly Service:</strong> Scikit-Learn IsolationForest evaluates sliding-window vectors and scores anomalous behavior.<br>
+                            4. <strong>Admin Alert:</strong> Generates real-time security alerts with severity (CRITICAL, HIGH, MEDIUM).<br>
+                            5. <strong>Feedback Loop:</strong> Admin clicks <em>"Suspend Test Key"</em>, immediately updating application status to block future requests at <strong>Auth & Consent Checks</strong>!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ER Diagram Card -->
+            <div class="card">
+                <div class="card-header flex-between">
+                    <div>
+                        <span class="hero-tag">DATA MODEL SPECIFICATION</span>
+                        <h3>SecureBank Connect — ER Diagram (7 Core Tables)</h3>
+                        <p>Complete entity relationship diagram with primary keys, foreign keys, and cardinalities</p>
+                    </div>
+                    <span class="badge badge-purple">7 Tables · 100% Relational</span>
+                </div>
+
+                <div class="diagram-container">
+                    <img src="/img/er_diagram.jpg" alt="SecureBank Connect ER Diagram" class="diagram-image">
+                </div>
+
+                <div class="erd-summary-grid mt-4">
+                    <div class="erd-table-pill">
+                        <strong>1. developers</strong>
+                        <span>developer_id (PK), name, email, company_name, password_hash, status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>2. applications</strong>
+                        <span>app_id (PK), developer_id (FK), app_name, client_id, client_secret, api_key</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>3. users</strong>
+                        <span>user_id (PK), name, email, phone_number, password_hash, role, kyc_status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>4. accounts</strong>
+                        <span>account_id (PK), user_id (FK), account_number, account_type, bank_name, currency</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>5. transactions</strong>
+                        <span>transaction_id (PK), account_id (FK), date, type, amount, description, status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>6. consents</strong>
+                        <span>consent_id (PK), user_id (FK), app_id (FK), account_id (FK), scopes, status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>7. api_logs & alerts</strong>
+                        <span>log_id (PK), app_id (FK), endpoint, method, response_status, alerts (FK log_id)</span>
+                    </div>
+                </div>
             </div>
         </section>
 

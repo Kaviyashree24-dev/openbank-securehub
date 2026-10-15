@@ -94,31 +94,31 @@ def execute_payment_transfer(from_account_id: str, to_account_id: str, amount: f
 
     # Deduct from source account
     cursor.execute("""
-    UPDATE bank_accounts
+    UPDATE accounts
     SET balance = ?, available_balance = ?
     WHERE account_id = ?
     """, (new_balance, new_avail, from_account_id))
 
     # Record Debit Transaction
     cursor.execute("""
-    INSERT INTO bank_transactions (transaction_id, account_id, description, category, amount, type, timestamp, counterparty, reference)
-    VALUES (?, ?, ?, 'Transfer / Payment', ?, 'DEBIT', ?, ?, ?)
-    """, (payment_id, from_account_id, f"OpenBanking Payment to {to_account_id}", amount, now_iso, to_account_id, reference))
+    INSERT INTO transactions (transaction_id, account_id, description, category, amount, type, date, timestamp, counterparty, reference_id, reference)
+    VALUES (?, ?, ?, 'Transfer / Payment', ?, 'DEBIT', ?, ?, ?, ?, ?)
+    """, (payment_id, from_account_id, f"OpenBanking Payment to {to_account_id}", amount, now_iso, now_iso, to_account_id, reference, reference))
 
     # If destination account is internal, credit it
-    dest = cursor.execute("SELECT * FROM bank_accounts WHERE account_id = ?", (to_account_id,)).fetchone()
+    dest = cursor.execute("SELECT * FROM accounts WHERE account_id = ?", (to_account_id,)).fetchone()
     if dest:
         dest_dict = dict(dest)
         cursor.execute("""
-        UPDATE bank_accounts
+        UPDATE accounts
         SET balance = balance + ?, available_balance = available_balance + ?
         WHERE account_id = ?
         """, (amount, amount, to_account_id))
 
         cursor.execute("""
-        INSERT INTO bank_transactions (transaction_id, account_id, description, category, amount, type, timestamp, counterparty, reference)
-        VALUES (?, ?, ?, 'Transfer / Payment', ?, 'CREDIT', ?, ?, ?)
-        """, (f"{payment_id}-CR", to_account_id, f"Payment received from {from_account_id}", amount, now_iso, from_account_id, reference))
+        INSERT INTO transactions (transaction_id, account_id, description, category, amount, type, date, timestamp, counterparty, reference_id, reference)
+        VALUES (?, ?, ?, 'Transfer / Payment', ?, 'CREDIT', ?, ?, ?, ?, ?)
+        """, (f"{payment_id}-CR", to_account_id, f"Payment received from {from_account_id}", amount, now_iso, now_iso, from_account_id, reference, reference))
 
     conn.commit()
     conn.close()

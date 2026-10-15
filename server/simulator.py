@@ -39,9 +39,9 @@ def run_simulation(scenario: str):
             is_anom, score, reasons, sev = detector.track_request(app, "192.168.1.45", status, latency, payload_sz)
             
             cursor.execute("""
-            INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
-            VALUES (?, ?, ?, ?, ?, '192.168.1.45', ?, ?, ?, ?)
-            """, (datetime.datetime.now(datetime.timezone.utc).isoformat(), app, method, ep, status, round(latency, 1), payload_sz, int(is_anom), score))
+            INSERT INTO api_logs (created_at, timestamp, app_id, method, endpoint, response_status, status_code, ip_address, response_time, response_time_ms, payload_size, is_anomalous, anomaly_score)
+            VALUES (?, ?, ?, ?, ?, ?, ?, '192.168.1.45', ?, ?, ?, ?, ?)
+            """, (now.isoformat(), now.isoformat(), app, method, ep, status, status, round(latency, 1), round(latency, 1), payload_sz, int(is_anom), score))
             results.append({"app": app, "endpoint": ep, "status": status, "score": score, "anomalous": is_anom})
 
     elif scenario == "burst":
@@ -55,9 +55,9 @@ def run_simulation(scenario: str):
             is_anom, score, reasons, sev = detector.track_request(app, "10.0.4.88", status, latency, payload_sz)
             
             cursor.execute("""
-            INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
-            VALUES (?, ?, 'GET', ?, ?, '10.0.4.88', ?, ?, ?, ?)
-            """, (datetime.datetime.now(datetime.timezone.utc).isoformat(), app, ep, status, round(latency, 1), payload_sz, int(is_anom), score))
+            INSERT INTO api_logs (created_at, timestamp, app_id, method, endpoint, response_status, status_code, ip_address, response_time, response_time_ms, payload_size, is_anomalous, anomaly_score)
+            VALUES (?, ?, ?, 'GET', ?, ?, ?, '10.0.4.88', ?, ?, ?, ?, ?)
+            """, (now.isoformat(), now.isoformat(), app, ep, status, status, round(latency, 1), round(latency, 1), payload_sz, int(is_anom), score))
             results.append({"app": app, "endpoint": ep, "status": status, "score": score, "anomalous": is_anom, "reasons": reasons})
 
     elif scenario == "scope_attack":
@@ -71,9 +71,9 @@ def run_simulation(scenario: str):
             is_anom, score, reasons, sev = detector.track_request(app, "172.16.0.12", status, latency, payload_sz, is_scope_violation=True)
             
             cursor.execute("""
-            INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
-            VALUES (?, ?, 'POST', ?, ?, '172.16.0.12', ?, ?, ?, ?)
-            """, (datetime.datetime.now(datetime.timezone.utc).isoformat(), app, ep, status, round(latency, 1), payload_sz, int(is_anom), score))
+            INSERT INTO api_logs (created_at, timestamp, app_id, method, endpoint, response_status, status_code, ip_address, response_time, response_time_ms, payload_size, is_anomalous, anomaly_score)
+            VALUES (?, ?, ?, 'POST', ?, ?, ?, '172.16.0.12', ?, ?, ?, ?, ?)
+            """, (now.isoformat(), now.isoformat(), app, ep, status, status, round(latency, 1), round(latency, 1), payload_sz, int(is_anom), score))
             results.append({"app": app, "endpoint": ep, "status": status, "score": score, "anomalous": is_anom, "reasons": reasons})
 
     elif scenario == "revoked_probe":
@@ -87,9 +87,9 @@ def run_simulation(scenario: str):
             is_anom, score, reasons, sev = detector.track_request(app, "192.168.1.99", status, latency, payload_sz, is_scope_violation=True)
             
             cursor.execute("""
-            INSERT INTO audit_logs (timestamp, app_id, method, endpoint, status_code, ip_address, response_time_ms, payload_size, is_anomalous, anomaly_score)
-            VALUES (?, ?, 'GET', ?, ?, '192.168.1.99', ?, ?, ?, ?)
-            """, (datetime.datetime.now(datetime.timezone.utc).isoformat(), app, ep, status, round(latency, 1), payload_sz, int(is_anom), score))
+            INSERT INTO api_logs (created_at, timestamp, app_id, method, endpoint, response_status, status_code, ip_address, response_time, response_time_ms, payload_size, is_anomalous, anomaly_score)
+            VALUES (?, ?, ?, 'GET', ?, ?, ?, '192.168.1.99', ?, ?, ?, ?, ?)
+            """, (now.isoformat(), now.isoformat(), app, ep, status, status, round(latency, 1), round(latency, 1), payload_sz, int(is_anom), score))
             results.append({"app": app, "endpoint": ep, "status": status, "score": score, "anomalous": is_anom, "reasons": reasons})
 
     conn.commit()

@@ -108,6 +108,7 @@ function renderAppsList() {
                         <span class="app-meta-val">${app.rate_limit} req/min</span>
                     </div>
                 </div>
+                ${app.developer_name ? `<div class="text-xs text-dim mt-1">Developer: <strong class="text-main">${escapeHtml(app.developer_name)}</strong> · ${escapeHtml(app.company_name || '')}</div>` : ''}
                 <div class="mt-1">
                     <span class="text-dim text-xs">Granted Scopes: </span>
                     ${scopes.map(s => `<span class="badge badge-blue code-font" style="font-size:0.65rem">${s}</span>`).join(" ")}
@@ -588,7 +589,10 @@ function renderAlerts(alerts) {
                     <div>
                         ${isResolved
                             ? `<span class="badge badge-emerald">RESOLVED</span>`
-                            : `<button class="btn btn-sm btn-secondary" onclick="resolveAlert('${a.alert_id}')">Acknowledge</button>`
+                            : `
+                                <button class="btn btn-sm btn-secondary" onclick="resolveAlert('${a.alert_id}')">Acknowledge</button>
+                                <button class="btn btn-sm btn-crimson-sm" style="margin-left:0.35rem" onclick="suspendAppFromAlert('${a.alert_id}', '${a.app_id}')">⛔ Suspend Key</button>
+                              `
                         }
                     </div>
                 </div>
@@ -609,6 +613,22 @@ async function resolveAlert(alertId) {
         await loadMetrics();
     } catch(e) {
         console.error("Error resolving alert:", e);
+    }
+}
+
+async function suspendAppFromAlert(alertId, appId) {
+    if (!confirm(`Suspend partner app '${appId}' immediately? This will block all subsequent requests at Auth & Consent Checks.`)) {
+        return;
+    }
+    try {
+        const res = await fetch(`/api/v1/monitoring/alerts/${alertId}/suspend-app`, { method: "POST" });
+        const data = await res.json();
+        alert(data.message || `App ${appId} suspended.`);
+        await loadAlerts();
+        await loadPartnerApps();
+        await loadMetrics();
+    } catch(e) {
+        alert("Failed to suspend app: " + e.message);
     }
 }
 

@@ -906,10 +906,105 @@ input[type="text"]:focus, textarea:focus, select:focus {
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .hero-banner, .arch-flow-grid, .portal-grid, .sandbox-container, .metrics-grid, .sim-buttons-grid, .monitor-grid {
+    .hero-banner, .arch-flow-grid, .portal-grid, .sandbox-container, .metrics-grid, .sim-buttons-grid, .monitor-grid, .arch-legend-grid {
         grid-template-columns: 1fr;
         flex-direction: column;
     }
     .arch-arrow { display: none; }
     .hero-stats { border-left: none; padding-left: 0; }
 }
+
+/* Architecture & ERD Diagram Showcases */
+.diagram-container {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.diagram-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease;
+}
+
+.diagram-image:hover {
+    transform: scale(1.01);
+}
+
+.arch-legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.legend-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+}
+
+.legend-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.legend-header h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.erd-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.75rem;
+}
+
+.erd-table-pill {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.erd-table-pill strong {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+.erd-table-pill span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+}
+
+.btn-crimson-sm {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-crimson-sm:hover {
+    background: var(--crimson);
+    color: #fff;
+}
+

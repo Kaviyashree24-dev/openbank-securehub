@@ -133,9 +133,9 @@ class AIAnomalyDetector:
                 now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 alert_id = f"ALT-AI-{uuid.uuid4().hex[:8].upper()}"
                 conn.execute("""
-                INSERT INTO security_alerts (alert_id, timestamp, app_id, alert_type, severity, description, status, ai_confidence)
-                VALUES (?, ?, ?, 'ANOMALOUS_TRAFFIC_PATTERN', ?, ?, 'ACTIVE', ?)
-                """, (alert_id, now_iso, app_id or "ANONYMOUS", severity, description, round(confidence, 2)))
+                INSERT INTO alerts (alert_id, created_at, timestamp, app_id, alert_type, severity, description, status, ai_confidence)
+                VALUES (?, ?, ?, ?, 'ANOMALOUS_TRAFFIC_PATTERN', ?, ?, 'ACTIVE', ?)
+                """, (alert_id, now_iso, now_iso, app_id or "ANONYMOUS", severity, description, round(confidence, 2)))
                 conn.commit()
                 break
             except Exception as e:

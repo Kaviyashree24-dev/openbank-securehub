@@ -14,9 +14,9 @@ def validate_customer_consent(customer_id: str, app_id: str, required_scope: str
     conn = get_db_connection()
     row = conn.execute("""
     SELECT * FROM consents
-    WHERE customer_id = ? AND app_id = ?
-    ORDER BY id DESC LIMIT 1
-    """, (customer_id, app_id)).fetchone()
+    WHERE (customer_id = ? OR user_id = ?) AND app_id = ?
+    ORDER BY rowid DESC LIMIT 1
+    """, (customer_id, customer_id, app_id)).fetchone()
     conn.close()
 
     if not row:
@@ -74,9 +74,9 @@ def create_consent(customer_id: str, app_id: str, scopes: list, duration_days: i
     consent_id = f"CNS-{uuid.uuid4().hex[:8].upper()}"
 
     conn.execute("""
-    INSERT INTO consents (consent_id, customer_id, app_id, scopes, status, expires_at, created_at)
-    VALUES (?, ?, ?, ?, 'ACTIVE', ?, ?)
-    """, (consent_id, customer_id, app_id, json.dumps(scopes), expires_at, now.isoformat()))
+    INSERT INTO consents (consent_id, user_id, customer_id, app_id, scopes, status, granted_at, created_at, expires_at)
+    VALUES (?, ?, ?, ?, ?, 'ACTIVE', ?, ?, ?)
+    """, (consent_id, customer_id, customer_id, app_id, json.dumps(scopes), now.isoformat(), now.isoformat(), expires_at))
     conn.commit()
 
     row = conn.execute("SELECT * FROM consents WHERE consent_id = ?", (consent_id,)).fetchone()
@@ -106,20 +106,21 @@ def list_consents(customer_id: str = None):
     conn = get_db_connection()
     if customer_id:
         rows = conn.execute("""
-        SELECT c.*, a.name AS app_name, cust.full_name AS customer_name
+        SELECT c.*, COALESCE(a.app_name, a.name) AS app_name, COALESCE(cust.name, cust.full_name) AS customer_name
         FROM consents c
-        JOIN partner_apps a ON c.app_id = a.client_id
-        JOIN bank_customers cust ON c.customer_id = cust.customer_id
-        WHERE c.customer_id = ?
-        ORDER BY c.id DESC
-        """, (customer_id,)).fetchall()
+        LEFT JOIN applications a ON c.app_id = a.client_id
+        LEFT JOIN users cust ON (c.customer_id = cust.customer_id OR c.user_id = cust.user_id)
+        WHERE (c.customer_id = ? OR c.user_id = ?)
+        ORDER BY c.rowid DESC
+        """, (customer_id, customer_id)).fetchall()
     else:
         rows = conn.execute("""
-        SELECT c.*, a.name AS app_name, cust.full_name AS customer_name
+        SELECT c.*, COALESCE(a.app_name, a.name) AS app_name, COALESCE(cust.name, cust.full_name) AS customer_name
         FROM consents c
-        JOIN partner_apps a ON c.app_id = a.client_id
-        JOIN bank_customers cust ON c.customer_id = cust.customer_id
-        ORDER BY c.id DESC
+        LEFT JOIN applications a ON c.app_id = a.client_id
+        LEFT JOIN users cust ON (c.customer_id = cust.customer_id OR c.user_id = cust.user_id)
+        ORDER BY c.rowid DESC
         """).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
