@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <!-- Chart.js for real-time telemetry charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
@@ -59,7 +59,7 @@
         <div class="header-right">
             <div class="gateway-status">
                 <span class="status-pulse"></span>
-                <span>Gateway <strong>Live</strong> · AI Active</span>
+                <span id="gatewayStatusText">Gateway <strong>Live</strong> · AI Active</span>
             </div>
         </div>
     </header>
@@ -186,7 +186,7 @@
                 </div>
 
                 <div class="diagram-container">
-                    <img src="/img/system_architecture.jpg" alt="SecureBank Connect System Architecture" class="diagram-image">
+                    <img src="img/system_architecture.jpg" alt="SecureBank Connect System Architecture" class="diagram-image">
                 </div>
 
                 <div class="arch-legend-grid mt-4">
@@ -233,7 +233,7 @@
                 </div>
 
                 <div class="diagram-container">
-                    <img src="/img/er_diagram.jpg" alt="SecureBank Connect ER Diagram" class="diagram-image">
+                    <img src="img/er_diagram.jpg" alt="SecureBank Connect ER Diagram" class="diagram-image">
                 </div>
 
                 <div class="erd-summary-grid mt-4">
@@ -624,6 +624,6 @@
         <p>SecureBank Connect · Open Banking & API Ecosystems Platform · Prototype with Synthetic Data & Mock APIs</p>
     </footer>
 
-    <script src="/js/app.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

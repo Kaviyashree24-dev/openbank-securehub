@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank Connect | Open Banking API Gateway & AI Monitoring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js for real-time telemetry charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="brand-badge">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">SecureBank <span>Connect</span></h1>
+                    <p class="brand-subtitle">One Secure Gateway · Smarter Banking Integrations</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Overview & Flow
+            </button>
+            <button class="nav-tab" data-tab="devportal">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+                Developer Portal
+            </button>
+            <button class="nav-tab" data-tab="sandbox">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31L4.2 18.5a2 2 0 0 0 1.7 3h12.2a2 2 0 0 0 1.7-3L14 9.31V2"/></svg>
+                API Sandbox Console
+            </button>
+            <button class="nav-tab" data-tab="consent">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7.5" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                Customer Consent
+            </button>
+            <button class="nav-tab" data-tab="architecture">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                Architecture & ERD
+            </button>
+            <button class="nav-tab" data-tab="monitoring">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                AI Monitoring & Threats
+                <span class="threat-dot" id="headerThreatDot"></span>
+            </button>
+        </nav>
+
+        <div class="header-right">
+            <div class="gateway-status">
+                <span class="status-pulse"></span>
+                <span id="gatewayStatusText">Gateway <strong>Live</strong> · AI Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+
+        <!-- ============================================================== -->
+        <!-- TAB 1: OVERVIEW & ARCHITECTURE -->
+        <!-- ============================================================== -->
+        <section id="tab-overview" class="tab-content active">
+            <div class="hero-banner">
+                <div class="hero-text">
+                    <span class="hero-tag">OPEN BANKING & API ECOSYSTEMS</span>
+                    <h2>Standardized, Governed & AI-Protected Open Banking</h2>
+                    <p>
+                        A unified gateway enabling authorized fintechs to integrate approved banking capabilities
+                        with explicit customer consent, standardized REST schemas, and real-time AI anomaly detection.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="switchTab('sandbox')">Launch API Sandbox</button>
+                        <button class="btn btn-secondary" onclick="switchTab('monitoring')">View AI Threat Monitor</button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Explicit Consent Governed</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">&lt; 35ms</span>
+                        <span class="stat-label">Gateway Routing Latency</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-number">IsolationForest</span>
+                        <span class="stat-label">AI Anomaly ML Model</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-heading">
+                <h3>End-to-End Open Banking Gateway Architecture</h3>
+                <p>How requests flow from partner apps through governance and AI monitoring</p>
+            </div>
+
+            <!-- Architecture Diagram Grid -->
+            <div class="arch-flow-grid">
+                <div class="arch-step">
+                    <div class="step-num">01</div>
+                    <div class="step-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <h4>Partner Apps</h4>
+                    <p>Fintech startups, budgeting apps & payroll platforms request scoped access credentials.</p>
+                    <span class="badge badge-blue">Registered & Verified</span>
+                </div>
+
+                <div class="arch-arrow">➔</div>
+
+                <div class="arch-step highlight-step">
+                    <div class="step-num">02</div>
+                    <div class="step-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h4>API Gateway</h4>
+                    <p>Central gateway performs OAuth2 validation, rate limiting, and exact scope checking.</p>
+                    <span class="badge badge-purple">OAuth2 + Rate Limits</span>
+                </div>
+
+                <div class="arch-arrow">➔</div>
+
+                <div class="arch-step highlight-step">
+                    <div class="step-num">03</div>
+                    <div class="step-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7.5" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                    </div>
+                    <h4>Customer Consent</h4>
+                    <p>Every request verifies active customer consent. Revoked or expired grants are denied (403).</p>
+                    <span class="badge badge-emerald">Revocable Consent</span>
+                </div>
+
+                <div class="arch-arrow">➔</div>
+
+                <div class="arch-step">
+                    <div class="step-num">04</div>
+                    <div class="step-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+                    </div>
+                    <h4>Core Banking APIs</h4>
+                    <p>Standard synthetic banking accounts, balances, transactions & payment settlement.</p>
+                    <span class="badge badge-blue">Synthetic Sandbox</span>
+                </div>
+            </div>
+
+            <!-- Supporting Flow: AI Anomaly Monitoring -->
+            <div class="ai-banner-card">
+                <div class="ai-banner-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><circle cx="9" cy="10" r="2"/><circle cx="15" cy="10" r="2"/><path d="M8 16h8"/></svg>
+                </div>
+                <div class="ai-banner-content">
+                    <h4>Continuous AI Anomaly Detection & Threat Prevention</h4>
+                    <p>
+                        Every API request triggers real-time sliding-window telemetry. The built-in <strong>Scikit-Learn IsolationForest</strong>
+                        engine detects DDoS traffic bursts, credential stuffing, repeated scope violations, and exfiltration attempts,
+                        instantly alerting security administrators with plain-English AI explanations.
+                    </p>
+                </div>
+                <button class="btn btn-emerald" onclick="switchTab('monitoring')">Explore Monitor</button>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB: ARCHITECTURE & ER DIAGRAM -->
+        <!-- ============================================================== -->
+        <section id="tab-architecture" class="tab-content">
+            <div class="card mb-4">
+                <div class="card-header flex-between">
+                    <div>
+                        <span class="hero-tag">OFFICIAL PROTOTYPE ARCHITECTURE</span>
+                        <h3>SecureBank Connect — System Architecture</h3>
+                        <p>End-to-end request path and continuous AI monitoring loop</p>
+                    </div>
+                    <span class="badge badge-emerald">Synthetic Data & Mock APIs Only</span>
+                </div>
+
+                <div class="diagram-container">
+                    <img src="img/system_architecture.jpg" alt="SecureBank Connect System Architecture" class="diagram-image">
+                </div>
+
+                <div class="arch-legend-grid mt-4">
+                    <div class="legend-card">
+                        <div class="legend-header">
+                            <span class="badge badge-blue">REQUEST PATH</span>
+                            <h4>App ➔ Gateway ➔ Mock Banking Core</h4>
+                        </div>
+                        <p class="text-sm text-muted">
+                            1. <strong>Developer / Partner App</strong> registers on Developer Portal and requests API access.<br>
+                            2. <strong>Developer Portal</strong> delivers documentation, sandbox credentials, and dashboard.<br>
+                            3. <strong>API Gateway</strong> handles incoming requests, routes endpoints (<code>/v1</code>), and enforces rate limits.<br>
+                            4. <strong>Auth & Consent Checks</strong> verifies bearer token/API key, validates active customer consent, and rejects unauthorized calls (401/403).<br>
+                            5. <strong>Mock Banking Services</strong> queries synthetic banking ledger (accounts, balances, transactions, and payments).<br>
+                            6. <strong>Database</strong> records transactions and updates customer account balances.
+                        </p>
+                    </div>
+
+                    <div class="legend-card">
+                        <div class="legend-header">
+                            <span class="badge badge-crimson">MONITORING & AI PATH</span>
+                            <h4>Telemetry ➔ IsolationForest ➔ Admin Feedback Loop</h4>
+                        </div>
+                        <p class="text-sm text-muted">
+                            1. <strong>API Activity Logs:</strong> Every request is recorded with client ID, endpoint, HTTP status, and latency.<br>
+                            2. <strong>Monitoring Module:</strong> Aggregates traffic patterns, error ratios, and latency deviations.<br>
+                            3. <strong>AI Anomaly Service:</strong> Scikit-Learn IsolationForest evaluates sliding-window vectors and scores anomalous behavior.<br>
+                            4. <strong>Admin Alert:</strong> Generates real-time security alerts with severity (CRITICAL, HIGH, MEDIUM).<br>
+                            5. <strong>Feedback Loop:</strong> Admin clicks <em>"Suspend Test Key"</em>, immediately updating application status to block future requests at <strong>Auth & Consent Checks</strong>!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ER Diagram Card -->
+            <div class="card">
+                <div class="card-header flex-between">
+                    <div>
+                        <span class="hero-tag">DATA MODEL SPECIFICATION</span>
+                        <h3>SecureBank Connect — ER Diagram (7 Core Tables)</h3>
+                        <p>Complete entity relationship diagram with primary keys, foreign keys, and cardinalities</p>
+                    </div>
+                    <span class="badge badge-purple">7 Tables · 100% Relational</span>
+                </div>
+
+                <div class="diagram-container">
+                    <img src="img/er_diagram.jpg" alt="SecureBank Connect ER Diagram" class="diagram-image">
+                </div>
+
+                <div class="erd-summary-grid mt-4">
+                    <div class="erd-table-pill">
+                        <strong>1. developers</strong>
+                        <span>developer_id (PK), name, email, company_name, password_hash, status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>2. applications</strong>
+                        <span>app_id (PK), developer_id (FK), app_name, client_id, client_secret, api_key</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>3. users</strong>
+                        <span>user_id (PK), name, email, phone_number, password_hash, role, kyc_status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>4. accounts</strong>
+                        <span>account_id (PK), user_id (FK), account_number, account_type, bank_name, currency</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>5. transactions</strong>
+                        <span>transaction_id (PK), account_id (FK), date, type, amount, description, status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>6. consents</strong>
+                        <span>consent_id (PK), user_id (FK), app_id (FK), account_id (FK), scopes, status</span>
+                    </div>
+                    <div class="erd-table-pill">
+                        <strong>7. api_logs & alerts</strong>
+                        <span>log_id (PK), app_id (FK), endpoint, method, response_status, alerts (FK log_id)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 2: DEVELOPER PORTAL -->
+        <!-- ============================================================== -->
+        <section id="tab-devportal" class="tab-content">
+            <div class="portal-grid">
+                <!-- Left: Register New App -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Register Partner Application</h3>
+                        <p>Generate production-grade API credentials with granular permission scopes</p>
+                    </div>
+                    <form id="appRegisterForm" class="styled-form">
+                        <div class="form-group">
+                            <label for="appNameInput">Application Name</label>
+                            <input type="text" id="appNameInput" placeholder="e.g. NeoPay Wallet, FinTrack App" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Allowed Open Banking Scopes</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="scopes" value="accounts:read" checked>
+                                    <span><code>accounts:read</code> (View accounts)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="scopes" value="balances:read" checked>
+                                    <span><code>balances:read</code> (View balances)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="scopes" value="transactions:read" checked>
+                                    <span><code>transactions:read</code> (Transaction history)</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="scopes" value="payments:create">
+                                    <span><code>payments:create</code> (Initiate fund transfers)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">Register Application & Generate Keys</button>
+                    </form>
+                </div>
+
+                <!-- Right: Active Partner Apps List -->
+                <div class="card">
+                    <div class="card-header flex-between">
+                        <div>
+                            <h3>Registered Partner Applications</h3>
+                            <p>Manage credentials, check permissions and toggle app status</p>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="loadPartnerApps()">Refresh</button>
+                    </div>
+                    <div id="appsListContainer" class="apps-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 3: API SANDBOX CONSOLE -->
+        <!-- ============================================================== -->
+        <section id="tab-sandbox" class="tab-content">
+            <div class="sandbox-container">
+                <!-- Sandbox Config Sidebar -->
+                <div class="sandbox-sidebar card">
+                    <div class="card-header">
+                        <h3>Request Configuration</h3>
+                        <p>Configure client identity, auth tokens, and endpoints</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Partner App Credential</label>
+                        <select id="sandboxAppSelect" onchange="onSandboxAppChange()">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Authentication Mode</label>
+                        <div class="radio-row">
+                            <label><input type="radio" name="authMode" value="token" checked onchange="toggleAuthMode()"> Bearer Token (OAuth2)</label>
+                            <label><input type="radio" name="authMode" value="apikey" onchange="toggleAuthMode()"> X-Api-Key Header</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="tokenFieldGroup">
+                        <div class="flex-between">
+                            <label>OAuth2 Access Token</label>
+                            <button class="btn-link" onclick="generateTokenFromSelectedApp()">Request New Token</button>
+                        </div>
+                        <textarea id="sandboxTokenInput" rows="3" class="code-font" placeholder="Bearer eyJhbGci..."></textarea>
+                    </div>
+
+                    <div class="form-group" id="apiKeyFieldGroup" style="display:none;">
+                        <label>X-Api-Key</label>
+                        <input type="text" id="sandboxApiKeyInput" class="code-font" placeholder="sb_live_...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Customer Context</label>
+                        <select id="sandboxCustomerSelect">
+                            <option value="CUST-1001">Sarah Jenkins (CUST-1001) · Active Consent</option>
+                            <option value="CUST-1002">Priya Sharma (CUST-1002) · Active Consent</option>
+                            <option value="CUST-1003">Alex Rivera (CUST-1003) · Revoked Consent</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Open Banking Endpoint Preset</label>
+                        <div class="preset-buttons">
+                            <button class="btn-preset active" onclick="setEndpointPreset('get_accounts')">GET /accounts</button>
+                            <button class="btn-preset" onclick="setEndpointPreset('get_balances')">GET /balances</button>
+                            <button class="btn-preset" onclick="setEndpointPreset('get_transactions')">GET /transactions</button>
+                            <button class="btn-preset" onclick="setEndpointPreset('post_payments')">POST /payments</button>
+                            <button class="btn-preset" onclick="setEndpointPreset('get_consents')">GET /consents</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sandbox Request & Response Main -->
+                <div class="sandbox-main">
+                    <!-- URL & Send Bar -->
+                    <div class="request-bar card">
+                        <div class="method-select-wrap">
+                            <select id="requestMethodSelect">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                            </select>
+                        </div>
+                        <input type="text" id="requestUrlInput" value="/api/v1/accounts" class="url-input code-font">
+                        <button id="sendRequestBtn" class="btn btn-primary" onclick="executeSandboxRequest()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Send Request
+                        </button>
+                    </div>
+
+                    <!-- Request Body editor (for POST) -->
+                    <div id="requestBodyPanel" class="card" style="display:none;">
+                        <div class="card-header-sm flex-between">
+                            <span>JSON Request Body</span>
+                            <span class="badge badge-blue">application/json</span>
+                        </div>
+                        <textarea id="requestBodyJson" rows="5" class="code-font">{
+  "from_account_id": "ACC-US-8901",
+  "to_account_id": "ACC-US-8903",
+  "amount": 250.00,
+  "currency": "USD",
+  "reference": "Vendor Payment INV-2026-09"
+}</textarea>
+                    </div>
+
+                    <!-- Response Inspector -->
+                    <div class="card response-card">
+                        <div class="card-header-sm flex-between">
+                            <div class="response-status-info">
+                                <span>Response: </span>
+                                <span id="responseStatusBadge" class="badge badge-gray">Awaiting Request</span>
+                                <span id="responseLatencyBadge" class="badge badge-outline">-- ms</span>
+                            </div>
+                            <button class="btn-copy" onclick="copyResponse()">Copy JSON</button>
+                        </div>
+                        <pre id="responseJsonViewer" class="code-viewer"><code>{
+  "message": "Click 'Send Request' to test Open Banking API endpoints live."
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 4: CUSTOMER CONSENT MANAGEMENT -->
+        <!-- ============================================================== -->
+        <section id="tab-consent" class="tab-content">
+            <div class="card mb-4">
+                <div class="card-header flex-between">
+                    <div>
+                        <h3>Customer Consent Management Simulator</h3>
+                        <p>Simulates the bank customer's direct control over which partner apps have access to their financial data</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="loadConsents()">Refresh Consents</button>
+                </div>
+                <div class="consent-info-banner">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <div>
+                        <strong>Key Open Banking Requirement:</strong> Customers can view and revoke access at any time.
+                        If consent is revoked, the API Gateway immediately blocks subsequent API calls with <code>403 Forbidden: Consent Revoked</code>.
+                    </div>
+                </div>
+
+                <div id="consentsTableContainer" class="table-responsive">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Grant New Consent Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Simulate Customer Granting New Consent</h3>
+                    <p>Authorize a registered partner application on behalf of a synthetic bank customer</p>
+                </div>
+                <form id="grantConsentForm" class="styled-form inline-form">
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <select id="consentCustomerSelect">
+                            <option value="CUST-1001">Sarah Jenkins (CUST-1001)</option>
+                            <option value="CUST-1002">Priya Sharma (CUST-1002)</option>
+                            <option value="CUST-1003">Alex Rivera (CUST-1003)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Partner Application</label>
+                        <select id="consentAppSelect">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Permissions to Grant</label>
+                        <div class="checkbox-row">
+                            <label><input type="checkbox" name="cScopes" value="accounts:read" checked> Accounts</label>
+                            <label><input type="checkbox" name="cScopes" value="balances:read" checked> Balances</label>
+                            <label><input type="checkbox" name="cScopes" value="transactions:read" checked> Transactions</label>
+                            <label><input type="checkbox" name="cScopes" value="payments:create"> Payments</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-emerald">Grant & Save Consent</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 5: AI MONITORING & THREAT DETECTION -->
+        <!-- ============================================================== -->
+        <section id="tab-monitoring" class="tab-content">
+            <!-- Metric KPI Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-title">Total API Gateway Calls</span>
+                    <h3 id="metricTotalCalls" class="metric-val">--</h3>
+                    <span class="metric-sub">Processed through gateway</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Active Partner Apps</span>
+                    <h3 id="metricActiveApps" class="metric-val">--</h3>
+                    <span class="metric-sub">Authorized ecosystems</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">AI Anomalies Flagged</span>
+                    <h3 id="metricAnomalies" class="metric-val text-crimson">--</h3>
+                    <span class="metric-sub">IsolationForest detections</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Average Latency</span>
+                    <h3 id="metricAvgLatency" class="metric-val">-- ms</h3>
+                    <span class="metric-sub">End-to-end response time</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-title">Error Rate</span>
+                    <h3 id="metricErrorRate" class="metric-val">-- %</h3>
+                    <span class="metric-sub">4xx / 5xx requests</span>
+                </div>
+            </div>
+
+            <!-- Traffic & Attack Pattern Simulator Controls -->
+            <div class="card simulator-card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h3>⚡ Interactive Live Attack & Traffic Simulator</h3>
+                        <p>Trigger synthetic real-time traffic patterns to test the Scikit-Learn AI Anomaly Engine</p>
+                    </div>
+                    <span id="simulatorRunningStatus" class="badge badge-gray">Idle</span>
+                </div>
+                <div class="sim-buttons-grid">
+                    <button class="btn btn-sim btn-sim-normal" onclick="triggerSimulation('normal')">
+                        <span class="sim-btn-title">🟢 Normal Fintech Traffic</span>
+                        <span class="sim-btn-desc">8 legitimate account & transaction queries</span>
+                    </button>
+                    <button class="btn btn-sim btn-sim-burst" onclick="triggerSimulation('burst')">
+                        <span class="sim-btn-title">⚡ Rapid Burst / Spike (DDoS)</span>
+                        <span class="sim-btn-desc">25 calls in 2s, triggers rate-limits & high AI alert</span>
+                    </button>
+                    <button class="btn btn-sim btn-sim-attack" onclick="triggerSimulation('scope_attack')">
+                        <span class="sim-btn-title">🛡️ Scope / Payment Attack</span>
+                        <span class="sim-btn-desc">Unauthorized payment attempts without scope grant</span>
+                    </button>
+                    <button class="btn btn-sim btn-sim-revoked" onclick="triggerSimulation('revoked_probe')">
+                        <span class="sim-btn-title">🚫 Revoked Consent Probing</span>
+                        <span class="sim-btn-desc">Attempting access to customer with revoked consent</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Alerts & Real-time Charts Row -->
+            <div class="monitor-grid">
+                <!-- Left: AI Security Alerts Feed -->
+                <div class="card">
+                    <div class="card-header flex-between">
+                        <div>
+                            <h3>AI Threat & Anomaly Alerts</h3>
+                            <p>Real-time machine learning detections requiring admin review</p>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="loadAlerts()">Refresh Alerts</button>
+                    </div>
+                    <div id="alertsContainer" class="alerts-feed">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Right: Status Codes Chart & Diagnostics -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Gateway Traffic Telemetry</h3>
+                        <p>HTTP Response Status Code Breakdown</p>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="statusCodeChart" height="220"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Audit Log Table -->
+            <div class="card mt-4">
+                <div class="card-header flex-between">
+                    <div>
+                        <h3>Live Request Audit Log</h3>
+                        <p>Complete traceability: method, endpoint, status, latency and AI anomaly score</p>
+                    </div>
+                    <button class="btn btn-sm btn-secondary" onclick="loadAuditLogs()">Refresh Log</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Partner App</th>
+                                <th>Method</th>
+                                <th>Endpoint</th>
+                                <th>Status</th>
+                                <th>Latency</th>
+                                <th>AI Anomaly Score</th>
+                                <th>Classification</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditLogsBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>SecureBank Connect · Open Banking & API Ecosystems Platform · Prototype with Synthetic Data & Mock APIs</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
